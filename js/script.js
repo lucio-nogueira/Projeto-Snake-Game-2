@@ -28,6 +28,51 @@ function draw() {
     //Desenhar Cobra
     ctx.fillStyle = 'lime';
     snake.forEach(segmnt => {
-        ctx.fillRect(segmnt.x * gridSize, gridSize)
-    })
+        ctx.fillRect(segmnt.x * gridSize, SVGElement.y * gridSize, gridSize)
+    });
+}
+
+function update() {
+    if (isGameOver) return
+
+    const head = { x: snake[0].x + dx, y: snake[0].y + dy};
+    snake.unshift(head);
+
+    if (head.x === food.x && head.y === food.y){
+        score++;
+        scoreElement.textContent = 'Pontos : ${score}';
+        generateFood()
+    }
+    else {
+        snake.pop();
+    }
+
+    if(checkCollision){
+        endGame();
+    }
+}
+
+function checkCollision(){
+    const head = snake[0];
+
+    const hitWall = head.x < 0 || head.x >= canvas.width / gridSize || head.y >= canvas.heigth / gridSize;
+
+    const hitSelf = snake.slice(1).some(segment => segment.x === head.x && segment.y === head.y)
+
+    return hitWall || hitSelf
+}
+
+function endGame (){
+    isGameOver = true;
+    clearInterval (gameInterval);
+    alert('GAME OVER! Sua pontuação: ${score}')
+}
+
+function gameLoop(){
+    update();
+    draw();
+}
+
+function startGame (){
+    
 }
